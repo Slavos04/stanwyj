@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environment
+venv/
+ENV/
+env/
+.env/
+.Python
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime
+*.log
+*.pid
+/tmp/
+
+# Downloads and generated
+downloads/
+
+# Secrets
+config.json
+
+# Node/npm
+node_modules/
+
+# Other
+*.bak
+*.swp
+

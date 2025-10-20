@@ -1,0 +1,196 @@
+[
+  {
+    "id": "138e1d59-dbdb-46a1-8995-cfdb14a9d90d",
+    "start": "2025-10-18T20:20:40.968956+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=3DcoC8p9az8",
+    "scheduled_id": null,
+    "status": "started"
+  },
+  {
+    "id": "138e1d59-dbdb-46a1-8995-cfdb14a9d90d",
+    "start": "2025-10-18T20:20:40.968956+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=3DcoC8p9az8",
+    "scheduled_id": null,
+    "status": "ok",
+    "end": "2025-10-18T20:21:13.765130+02:00"
+  },
+  {
+    "id": "3145e15b-8a83-489f-89a2-07cc3438ca6f",
+    "start": "2025-10-18T20:22:16.036661+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=BC19kwABFwc",
+    "scheduled_id": null,
+    "status": "started"
+  },
+  {
+    "id": "3145e15b-8a83-489f-89a2-07cc3438ca6f",
+    "start": "2025-10-18T20:22:16.036661+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=BC19kwABFwc",
+    "scheduled_id": null,
+    "status": "ok",
+    "end": "2025-10-18T20:22:32.130176+02:00"
+  },
+  {
+    "id": "ffe625c7-1257-48ee-b004-3f755964be7e",
+    "start": "2025-10-19T08:13:00.004598+02:00",
+    "query": "stan wyjątkowy",
+    "url": null,
+    "scheduled_id": "2c53d344-a00f-4c8f-b5e9-a347f609e5d6",
+    "status": "started"
+  },
+  {
+    "id": "ffe625c7-1257-48ee-b004-3f755964be7e",
+    "start": "2025-10-19T08:13:00.004598+02:00",
+    "query": "stan wyjątkowy",
+    "url": null,
+    "scheduled_id": "2c53d344-a00f-4c8f-b5e9-a347f609e5d6",
+    "status": "ok",
+    "end": "2025-10-19T08:18:24.238416+02:00",
+    "error": ""
+  },
+  {
+    "id": "37644c19-2aaa-40bc-aa00-948b78089d36",
+    "start": "2025-10-19T10:00:00.240836+02:00",
+    "query": "dua lipa houdini",
+    "url": null,
+    "scheduled_id": "ee3b430a-419e-4b94-b12e-9c8e766d4c80",
+    "status": "started"
+  },
+  {
+    "id": "37644c19-2aaa-40bc-aa00-948b78089d36",
+    "start": "2025-10-19T10:00:00.240836+02:00",
+    "query": "dua lipa houdini",
+    "url": null,
+    "scheduled_id": "ee3b430a-419e-4b94-b12e-9c8e766d4c80",
+    "status": "ok",
+    "end": "2025-10-19T10:00:23.718800+02:00",
+    "error": ""
+  },
+  {
+    "id": "d91e8f4b-1b0f-475f-847f-211647c0e002",
+    "start": "2025-10-20T06:24:00.236842+02:00",
+    "query": "stan wyjątkowy",
+    "url": null,
+    "scheduled_id": "82662725-aa2c-4c02-ba8a-ecb128a90047",
+    "status": "started"
+  },
+  {
+    "id": "d91e8f4b-1b0f-475f-847f-211647c0e002",
+    "start": "2025-10-20T06:24:00.236842+02:00",
+    "query": "stan wyjątkowy",
+    "url": null,
+    "scheduled_id": "82662725-aa2c-4c02-ba8a-ecb128a90047",
+    "status": "ok",
+    "duration_seconds": 5087,
+    "duration_hms": "01:24:47",
+    "size_bytes": 215551577,
+    "size_mb": 205.57,
+    "video_url": "https://www.youtube.com/watch?v=HyWN4JCejl4",
+    "end": "2025-10-20T06:27:04.653987+02:00",
+    "error": "",
+    "remote_url": "https://192.168.1.100/remote.php/dav/files/slavos/stanwyj/Połówka rządu Tuska. Kaczyński przytulił Bąkiewicza. Żurek chce odbić Trybunał Konstytucyjny.mp3"
+  },
+  {
+    "id": "543c76a9-e768-4581-9e45-5b4191497815",
+    "start": "2025-10-20T14:37:39.442371+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=HyWN4JCejl4",
+    "scheduled_id": null,
+    "status": "started"
+  },
+  {
+    "id": "543c76a9-e768-4581-9e45-5b4191497815",
+    "start": "2025-10-20T14:37:39.442371+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=HyWN4JCejl4",
+    "scheduled_id": null,
+    "status": "ok",
+    "duration_seconds": 5087,
+    "duration_hms": "01:24:47",
+    "size_bytes": 435997218,
+    "size_mb": 415.8,
+    "video_url": "https://www.youtube.com/watch?v=HyWN4JCejl4",
+    "local_path": "/home/slavos/projektypython/stanwyj/Połówka rządu Tuska. Kaczyński przytulił Bąkiewicza. Żurek chce odbić Trybunał Konstytucyjny.mp3",
+    "end": "2025-10-20T14:40:41.576924+02:00",
+    "error": "",
+    "remote_url": "https://192.168.1.100/remote.php/dav/files/slavos/stanwyj/Połówka rządu Tuska. Kaczyński przytulił Bąkiewicza. Żurek chce odbić Trybunał Konstytucyjny.mp3"
+  },
+  {
+    "id": "e32f2778-fc65-4f47-bad8-b66ec3fb59e3",
+    "start": "2025-10-20T15:53:24.856607+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "scheduled_id": null,
+    "status": "started"
+  },
+  {
+    "id": "bb2a3c1b-0808-4b4e-adad-8d55aeaa91d2",
+    "start": "2025-10-20T15:53:32.514483+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "scheduled_id": null,
+    "status": "started"
+  },
+  {
+    "id": "e32f2778-fc65-4f47-bad8-b66ec3fb59e3",
+    "start": "2025-10-20T15:53:24.856607+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "scheduled_id": null,
+    "status": "ok",
+    "duration_seconds": 19,
+    "duration_hms": "00:00:19",
+    "size_bytes": 258472,
+    "size_mb": 0.25,
+    "video_url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "local_path": "/home/slavos/projektypython/stanwyj/downloads/Me at the zoo.mp3",
+    "end": "2025-10-20T15:53:37.341847+02:00",
+    "error": "",
+    "remote_url": "https://192.168.1.100/remote.php/dav/files/slavos/stanwyj/Me at the zoo.mp3"
+  },
+  {
+    "id": "bb2a3c1b-0808-4b4e-adad-8d55aeaa91d2",
+    "start": "2025-10-20T15:53:32.514483+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "scheduled_id": null,
+    "status": "ok",
+    "duration_seconds": 19,
+    "duration_hms": "00:00:19",
+    "size_bytes": 258472,
+    "size_mb": 0.25,
+    "video_url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "local_path": "/home/slavos/projektypython/stanwyj/downloads/Me at the zoo.mp3",
+    "end": "2025-10-20T15:53:44.675753+02:00",
+    "error": "",
+    "remote_url": "https://192.168.1.100/remote.php/dav/files/slavos/stanwyj/Me at the zoo.mp3"
+  },
+  {
+    "id": "2c3e1636-1e26-48fa-9586-03d37186aff4",
+    "start": "2025-10-20T15:54:21.825913+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "scheduled_id": null,
+    "status": "started"
+  },
+  {
+    "id": "2c3e1636-1e26-48fa-9586-03d37186aff4",
+    "start": "2025-10-20T15:54:21.825913+02:00",
+    "query": null,
+    "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "scheduled_id": null,
+    "status": "ok",
+    "duration_seconds": 19,
+    "duration_hms": "00:00:19",
+    "size_bytes": 791367,
+    "size_mb": 0.75,
+    "video_url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "local_path": "/home/slavos/projektypython/stanwyj/downloads/Me at the zoo.mp3",
+    "end": "2025-10-20T15:54:33.515669+02:00",
+    "error": "",
+    "remote_url": "https://192.168.1.100/remote.php/dav/files/slavos/stanwyj/Me at the zoo.mp3"
+  }
+]

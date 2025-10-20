@@ -1,0 +1,14 @@
+[Unit]
+Description=StanWyj MP3 downloader
+After=network.target
+
+[Service]
+Type=simple
+User=youruser
+WorkingDirectory=/programy/stanwyj
+Environment="PATH=/programy/stanwyj/venv/bin"
+ExecStart=/programy/stanwyj/venv/bin/python /programy/stanwyj/server.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

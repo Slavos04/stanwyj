@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Downloader MP3 - frontend</title>
+  <style>
+    :root{
+      --bg:#0f1115;
+      --panel:#15171b;
+      --muted:#9aa3b2;
+      --text:#e6eef6;
+      --accent:#4f9cff;
+      --danger:#ff6b6b;
+      --card-border: rgba(255,255,255,0.06);
+    }
+    html,body{height:100%}
+    body{font-family:Inter, Arial, Helvetica, sans-serif;margin:20px;background:var(--bg);color:var(--text)}
+    a{color:var(--accent)}
+    .row{display:flex;gap:12px;align-items:center}
+    .card{background:var(--panel);border:1px solid var(--card-border);padding:12px;margin:8px 0;border-radius:8px}
+    input,select,button{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:6px}
+    input::placeholder{color:var(--muted)}
+    button{background:linear-gradient(180deg, rgba(79,156,255,0.12), rgba(79,156,255,0.06));border-color:rgba(79,156,255,0.18);cursor:pointer}
+    button:hover{filter:brightness(1.08)}
+    h2,h3{color:var(--text);margin:6px 0}
+    .small{font-size:0.9rem;color:var(--muted)}
+    .card b{color:var(--text)}
+  </style>
+</head>
+<body>
+  <h2>Downloader MP3 - interfejs</h2>
+
+  <div class="card">
+    <div class="row">
+      <input id="query" placeholder="Fraza do wyszukania" style="flex:1;padding:8px" />
+      <button id="search">Szukaj</button>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <div class="card">
+    <h3>Harmonogram</h3>
+    <form id="schedForm">
+      <input id="s_query" placeholder="Fraza (harmonogram)" style="width:40%" required />
+      <select id="s_type">
+        <option value="daily">Codziennie</option>
+        <option value="weekly">Co tydzień</option>
+        <option value="biweekly">Co 2 tygodnie</option>
+        <option value="monthly">Co miesiąc</option>
+      </select>
+      <select id="s_day">
+        <option value="0">Poniedziałek</option>
+        <option value="1">Wtorek</option>
+        <option value="2">Środa</option>
+        <option value="3">Czwartek</option>
+        <option value="4">Piątek</option>
+        <option value="5">Sobota</option>
+        <option value="6">Niedziela</option>
+      </select>
+      <input id="s_time" type="time" value="09:00" />
+      <button type="submit">Dodaj harmonogram</button>
+    </form>
+
+    <div id="schedules"></div>
+  </div>
+
+  <div class="card">
+    <h3>Ostatnie zadania</h3>
+    <div id="jobs"></div>
+  </div>
+
+  <div class="card">
+    <h3>Pobrane pliki lokalnie</h3>
+    <div id="local_files" class="small">Ładuję...</div>
+  </div>
+
+  <div class="card">
+    <!-- Google Drive integration removed -->
+  </div>
+    <div class="card">
+      <h3>Ustawienia Nextcloud (WebDAV)</h3>
+      <div class="small">Prześlij pliki do katalogu Nextcloud. Wprowadź URL WebDAV lub użyj uploadu pliku JSON service-account jeśli dotyczy.</div>
+      <div style="margin-top:8px">
+        <label class="small">WebDAV URL (np. https://192.168.1.100/remote.php/dav/files/USERNAME)</label><br/>
+        <input id="nc_url" placeholder="https://192.168.1.100/remote.php/dav/files/youruser" style="width:80%" />
+      </div>
+      <div style="margin-top:8px">
+        <label class="small">Użytkownik</label><br/>
+        <input id="nc_user" placeholder="youruser" style="width:40%" />
+      </div>
+      <div style="margin-top:8px">
+        <label class="small">Hasło (lub app password)</label><br/>
+        <input id="nc_pass" placeholder="haslo" type="password" style="width:40%" />
+      </div>
+      <div style="margin-top:8px">
+        <label class="small">Folder docelowy (np. downloads)</label><br/>
+        <input id="nc_folder" placeholder="stanwyj" style="width:40%" />
+      </div>
+      <div style="margin-top:8px" class="row">
+        <label class="small"><input type="checkbox" id="nc_enabled" disabled/> Włącz</label>
+        <label class="small"><input type="checkbox" id="nc_verify" checked disabled /> Sprawdź SSL</label>
+        <button id="nc_save">Zapisz ustawienia</button>
+        <button id="nc_test">Przetestuj upload</button>
+      </div>
+      <div id="nc_status" class="small" style="margin-top:8px"></div>
+    </div>
+
+  <script>
+    const resultsEl = document.getElementById('results')
+    async function search(){
+      const q = document.getElementById('query').value.trim()
+      resultsEl.innerHTML = '<div class="card">Szukam...</div>'
+      try{
+        const res = await fetch('/api/search?query='+encodeURIComponent(q))
+        if(!res.ok){
+          // try to parse JSON error body
+          let txt = ''
+          try{ txt = await res.text() }catch(e){}
+          throw new Error(`Server returned ${res.status}: ${txt}`)
+        }
+        const data = await res.json()
+        resultsEl.innerHTML = ''
+        if(!data || data.length===0){
+          resultsEl.innerHTML = '<div class="card">Brak wyników</div>'
+          return
+        }
+        data.forEach(d=>{
+          const div = document.createElement('div')
+          div.className='card'
+          div.innerHTML = `<b>${d.title}</b><br/>Czas: ${d.duration}  Data: ${d.upload_date}  Rozmiar: ${d.size||'n/d'}<br/><button data-url="${d.url}">Pobierz</button>`
+          div.querySelector('button').addEventListener('click', async (e)=>{
+            await fetch('/api/download',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({url:d.url})})
+            alert('Pobieranie uruchomione')
+          })
+          resultsEl.appendChild(div)
+        })
+      }catch(err){
+        console.error('Search error', err)
+        resultsEl.innerHTML = `<div class="card">Błąd: ${err.message}</div>`
+      }
+    }
+
+    document.getElementById('search').addEventListener('click', search)
+    document.getElementById('query').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); search() } })
+
+    document.getElementById('schedForm').addEventListener('submit', async (e)=>{
+      e.preventDefault()
+      const q = document.getElementById('s_query').value
+      const type = document.getElementById('s_type').value
+      const day = document.getElementById('s_day').value
+      const time = document.getElementById('s_time').value
+      const [hour, minute] = time.split(':')
+      const payload = {query:q, type:type, day_of_week: day, hour: hour, minute: minute}
+      const r = await fetch('/api/schedule',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)})
+      const data = await r.json()
+      alert('Dodano harmonogram')
+      loadSchedules()
+    })
+
+    async function loadSchedules(){
+      const res = await fetch('/api/schedule')
+      const list = await res.json()
+      const el = document.getElementById('schedules')
+      el.innerHTML = ''
+      const dayNames = ['Pon','Wt','Śr','Czw','Pt','Sob','Ndz']
+      list.forEach(s=>{
+        const d = document.createElement('div')
+        d.className='card'
+          const dow = (s.day_of_week !== undefined && s.day_of_week !== null) ? dayNames[Number(s.day_of_week)%7] : ''
+          d.innerHTML = `<b>${s.query}</b> (${s.type}) ${dow} at ${s.hour||'00'}:${s.minute||'00'} <button data-id="${s.id}">Usuń</button>`
+        d.querySelector('button').addEventListener('click', async ()=>{
+          await fetch('/api/schedule',{method:'DELETE',headers:{'content-type':'application/json'},body:JSON.stringify({id:s.id})})
+          loadSchedules()
+        })
+        el.appendChild(d)
+      })
+    }
+
+    async function loadJobs(){
+      const res = await fetch('/api/jobs')
+      const data = await res.json()
+      const el = document.getElementById('jobs')
+      el.innerHTML = ''
+      data.forEach(j=>{
+        const d = document.createElement('div')
+        d.className='card'
+        let txt = `${j.start} - ${j.query||j.url} - ${j.status}`
+        d.textContent = txt
+        if(j.video_url){
+          const y = document.createElement('a')
+          y.href = j.video_url
+          y.textContent = 'YouTube'
+          y.style.display='inline-block'
+          y.style.marginRight='12px'
+          y.target='_blank'
+          d.appendChild(y)
+        }
+        if(j.duration_hms){
+          const t = document.createElement('span')
+          t.textContent = `Czas: ${j.duration_hms}`
+          t.style.display='inline-block'
+          t.style.marginRight='12px'
+          d.appendChild(t)
+        }
+        if(j.size_mb){
+          const s = document.createElement('span')
+          s.textContent = `Rozmiar: ${j.size_mb} MB`
+          s.style.display='inline-block'
+          s.style.marginRight='12px'
+          d.appendChild(s)
+        }
+          if(j.remote_url){
+            const a = document.createElement('a')
+            a.href = j.remote_url
+            a.textContent = 'Pobierz'
+            a.style.display='block'
+            a.style.marginTop='6px'
+            a.target='_blank'
+            d.appendChild(a)
+          }
+          if(j.local_path){
+            const p = document.createElement('div')
+            p.className='small'
+            p.textContent = `Zapisano lokalnie: ${j.local_path}`
+            p.style.marginTop='6px'
+            d.appendChild(p)
+          }
+        el.appendChild(d)
+      })
+    }
+
+    loadSchedules(); loadJobs();
+    setInterval(loadJobs, 30000)
+  setInterval(loadLocalFiles, 30000)
+
+    // Nextcloud settings wiring
+    async function loadConfig(){
+      const res = await fetch('/api/config')
+      const cfg = await res.json()
+      const nc = cfg.nextcloud || {}
+      document.getElementById('nc_url').value = nc.webdav_url || nc.url || ''
+      document.getElementById('nc_user').value = nc.user || ''
+      document.getElementById('nc_pass').value = nc.password || ''
+      document.getElementById('nc_folder').value = nc.folder || 'stanwyj'
+      document.getElementById('nc_enabled').checked = !!nc.enabled
+      // ensure backward compatibility with stored config that may use verify_ssl or verify
+      document.getElementById('nc_verify').checked = (typeof nc.verify_ssl !== 'undefined') ? !!nc.verify_ssl : ((typeof nc.verify !== 'undefined') ? !!nc.verify : true)
+    }
+
+  document.getElementById('nc_save').addEventListener('click', async ()=>{
+      const cfg = await (await fetch('/api/config')).json()
+      cfg.nextcloud = cfg.nextcloud || {}
+      cfg.nextcloud.webdav_url = document.getElementById('nc_url').value
+      cfg.nextcloud.user = document.getElementById('nc_user').value
+      cfg.nextcloud.password = document.getElementById('nc_pass').value
+      cfg.nextcloud.folder = document.getElementById('nc_folder').value
+  cfg.nextcloud.enabled = document.getElementById('nc_enabled').checked
+  cfg.nextcloud.verify_ssl = document.getElementById('nc_verify').checked
+      await fetch('/api/config', {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(cfg)})
+      document.getElementById('nc_status').textContent = 'Zapisano.'
+      setTimeout(()=>document.getElementById('nc_status').textContent='',2000)
+    })
+
+    document.getElementById('nc_test').addEventListener('click', async ()=>{
+      document.getElementById('nc_status').textContent = 'Testuję...'
+      try{
+        const res = await fetch('/api/nextcloud_test', {method:'POST'})
+        const data = await res.json()
+        if(res.ok && data.ok){
+          document.getElementById('nc_status').textContent = 'Upload OK: '+data.message
+        }else{
+          document.getElementById('nc_status').textContent = 'Błąd: '+(data.message||'nieznany')
+        }
+      }catch(e){
+        document.getElementById('nc_status').textContent = 'Błąd sieci: '+e.message
+      }
+      setTimeout(()=>document.getElementById('nc_status').textContent='',8000)
+    })
+
+    loadConfig()
+    // local files
+    async function loadLocalFiles(){
+      const el = document.getElementById('local_files')
+      el.textContent = 'Ładuję...'
+      try{
+        const res = await fetch('/api/local_files')
+        const data = await res.json()
+        if(!Array.isArray(data) || data.length===0){
+          el.textContent = 'Brak plików lokalnych.'
+          return
+        }
+        el.innerHTML = ''
+        data.forEach(f=>{
+          const d = document.createElement('div')
+          d.className='card'
+          const name = document.createElement('div')
+          name.textContent = f.name
+          name.style.marginBottom='6px'
+          d.appendChild(name)
+          const row = document.createElement('div')
+          row.className='row'
+          const dl = document.createElement('a')
+          dl.href = '/static/..'+f.path
+          dl.textContent = 'Ścieżka'
+          dl.target='_blank'
+          row.appendChild(dl)
+          const btn = document.createElement('button')
+          btn.textContent = 'Usuń'
+          btn.addEventListener('click', async ()=>{
+            if(!confirm('Usunąć plik lokalny?')) return
+            const r = await fetch('/api/local_files',{method:'DELETE',headers:{'content-type':'application/json'},body:JSON.stringify({path:f.path})})
+            const j = await r.json()
+            if(r.ok){
+              loadLocalFiles();
+              loadJobs();
+            }else{
+              alert('Błąd: '+(j.error||'nieznany'))
+            }
+          })
+          row.appendChild(btn)
+          d.appendChild(row)
+          el.appendChild(d)
+        })
+      }catch(e){
+        el.textContent = 'Błąd: '+e.message
+      }
+    }
+  </script>
+</body>
+</html>
