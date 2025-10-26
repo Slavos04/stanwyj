@@ -192,5 +192,30 @@
     "end": "2025-10-20T15:54:33.515669+02:00",
     "error": "",
     "remote_url": "https://192.168.1.100/remote.php/dav/files/slavos/stanwyj/Me at the zoo.mp3"
+  },
+  {
+    "id": "41670a94-cabf-4c02-99e7-4c7783705d21",
+    "start": "2025-10-21T05:50:00.189994+02:00",
+    "query": "Blanka - Solo",
+    "url": null,
+    "scheduled_id": "92b7324f-e018-491a-85b1-bf06551828da",
+    "status": "started"
+  },
+  {
+    "id": "41670a94-cabf-4c02-99e7-4c7783705d21",
+    "start": "2025-10-21T05:50:00.189994+02:00",
+    "query": "Blanka - Solo",
+    "url": null,
+    "scheduled_id": "92b7324f-e018-491a-85b1-bf06551828da",
+    "status": "ok",
+    "duration_seconds": 157,
+    "duration_hms": "00:02:37",
+    "size_bytes": 182736753,
+    "size_mb": 174.27,
+    "video_url": "https://www.youtube.com/watch?v=PvQRpV1-ZhY",
+    "local_path": "/home/slavos/projektypython/stanwyj/downloads/Blanka - Solo [Official Music Video].mp3",
+    "end": "2025-10-21T05:50:29.359606+02:00",
+    "error": "",
+    "remote_url": "https://192.168.1.100/remote.php/dav/files/slavos/stanwyj/Blanka - Solo [Official Music Video].mp3"
   }
 ]

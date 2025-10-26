@@ -189,6 +189,22 @@ def download_audio(video_url: str, outtmpl: str = '%(title)s.%(ext)s', output_di
         ],
     }
 
+    # allow overriding ffmpeg location via config (either top-level 'ffmpeg_location' or under 'yt_dlp')
+    ffmpeg_loc = None
+    if cfg.get('yt_dlp', {}).get('ffmpeg_location'):
+        ffmpeg_loc = cfg.get('yt_dlp', {}).get('ffmpeg_location')
+    elif cfg.get('ffmpeg_location'):
+        ffmpeg_loc = cfg.get('ffmpeg_location')
+    else:
+        # try to auto-detect ffmpeg in PATH
+        ff = shutil.which('ffmpeg')
+        if ff:
+            ffmpeg_loc = os.path.dirname(ff)
+
+    if ffmpeg_loc:
+        # yt-dlp expects ffmpeg_location to be the directory containing ffmpeg/ffprobe
+        base_opts['ffmpeg_location'] = ffmpeg_loc
+
     ua = cfg.get('yt_dlp', {}).get('user_agent')
     if ua:
         base_opts['http_headers'] = {'User-Agent': ua}
