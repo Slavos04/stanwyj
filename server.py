@@ -60,7 +60,8 @@ def send_telegram_notification(text):
     try:
         import requests
         url = f'https://api.telegram.org/bot{token}/sendMessage'
-        resp = requests.post(url, json={'chat_id': chat_id, 'text': text})
+        # Telegram obsługuje HTML formatting
+        resp = requests.post(url, json={'chat_id': chat_id, 'text': text, 'parse_mode': 'HTML'})
         return resp.status_code == 200
     except Exception as e:
         print('Błąd wysyłania Telegrama:', e)
@@ -241,29 +242,73 @@ def perform_download_task(query=None, url=None, scheduled_id=None):
             # If Nextcloud not enabled, we do not perform other cloud uploads
 
     # send Telegram notification if configured
-    text = f"Pobieranie {'powiodło się' if ok else 'nie powiodło się'}: {query or url}\nStatus: {record.get('status')}"
+    # Zbuduj wiadomość z kolorami HTML i emoji
+    status_icon = '✅' if ok else '❌'
+    status_text = 'powiodło się' if ok else 'nie powiodło się'
+    
+    # Oblicz czas pobierania
+    duration = 'N/A'
+    try:
+        start_dt = datetime.fromisoformat(record.get('start', ''))
+        end_dt = datetime.fromisoformat(record.get('end', ''))
+        duration = str(end_dt - start_dt).split('.')[0]
+    except Exception:
+        pass
+    
+    # Skróć tytuł jeśli jest za długi
+    title = query or url or 'Pobieranie'
+    if len(title) > 80:
+        title = title[:77] + '...'
+    
+    # Buduj tekst z formatowaniem HTML
+    text = f"<b>{status_icon} Pobieranie {status_text}</b>\n"
+    text += f"<i>{title}</i>\n"
+    text += f"━━━━━━━━━━━━━━━━━\n"
+    
+    if ok:
+        text += f"<b>✅ Status:</b> <code>ok</code>\n"
+    else:
+        text += f"<b>❌ Status:</b> <code>failed</code>\n"
+    
+    text += f"<b>🕐 Czas:</b> {record.get('start', 'N/A')[:19]}\n"
+    text += f"<b>⏱️ Czas pobierania:</b> {duration}\n"
+    
     err_msg = ''
     if not ok:
         err_msg = path_or_error or record.get('error') or ''
     if err_msg:
-        text += f"\nBłąd: {err_msg}"
+        text += f"<b>❗ Błąd:</b> <code>{err_msg[:200]}</code>\n"
+    
     if ok and record.get('local_path'):
-        text += f"\nLokalnie: {record.get('local_path')}"
-    if gd_result:
-        text += f"\nUpload: {gd_result[0]} - {gd_result[1]}"
-        # if Nextcloud upload succeeded, persist remote_url into the last job record
+        size_mb = 'N/A'
         try:
-            if gd_result[0] == 'nc_ok':
+            size_bytes = os.path.getsize(record.get('local_path'))
+            size_mb = f"{size_bytes / 1024 / 1024:.1f} MB"
+        except Exception:
+            pass
+        filename = os.path.basename(record.get('local_path'))
+        text += f"<b>📁 Plik:</b> <code>{filename}</code> ({size_mb})\n"
+    
+    if record.get('duration_hms'):
+        text += f"<b>🎬 Czas wideo:</b> {record.get('duration_hms')}\n"
+    
+    if gd_result:
+        if gd_result[0] == 'nc_ok':
+            text += f"☁️ <b>Upload Nextcloud:</b> ✅ {gd_result[1][:100]}\n"
+            # persist remote_url into the last job record
+            try:
                 remote = gd_result[1]
                 jobs = load_json_or_empty(JOBS_FILE, [])
-                # find the last record with this id
                 for j in reversed(jobs):
                     if j.get('id') == record.get('id'):
                         j['remote_url'] = remote
                         break
                 save_json(JOBS_FILE, jobs)
-        except Exception as e:
-            print('Failed to persist remote_url:', e)
+            except Exception as e:
+                print('Failed to persist remote_url:', e)
+        else:
+            text += f"⚠️ <b>Upload Nextcloud:</b> ❌ {gd_result[0]}\n"
+    
     send_telegram_notification(text)
 
 

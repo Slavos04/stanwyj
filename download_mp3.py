@@ -132,7 +132,6 @@ def search_youtube(query: str, limit: int = 5) -> List[Dict[str, Any]]:
         'no_warnings': True,
         'skip_download': True,
         'extract_flat': True,
-        'allow_unplayable_formats': True,
         'retries': cfg.get('yt_dlp', {}).get('retries', 3),
         'logger': _SilentLogger(),
     }
@@ -153,7 +152,7 @@ def search_youtube(query: str, limit: int = 5) -> List[Dict[str, Any]]:
 
     results: List[Dict[str, Any]] = []
     # fetch full info for each entry (best-effort)
-    with yt_dlp.YoutubeDL({'quiet': True, 'no_warnings': True, 'allow_unplayable_formats': True, 'logger': _SilentLogger()}) as ydl:
+    with yt_dlp.YoutubeDL({'quiet': True, 'no_warnings': True, 'logger': _SilentLogger()}) as ydl:
         for e in entries:
             try:
                 vid = e.get('url') or e.get('id')
@@ -180,7 +179,6 @@ def download_audio(video_url: str, outtmpl: str = '%(title)s.%(ext)s', output_di
         'noplaylist': True,
         'writethumbnail': True,
         'prefer_ffmpeg': True,
-        'allow_unplayable_formats': True,
         'retries': cfg.get('yt_dlp', {}).get('retries', 3),
         'postprocessors': [
             {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': '96'},
@@ -215,8 +213,15 @@ def download_audio(video_url: str, outtmpl: str = '%(title)s.%(ext)s', output_di
     attempts = cfg.get('yt_dlp', {}).get('attempts', 3) or 3
     for attempt in range(1, attempts + 1):
         opts = dict(base_opts)
-        if attempt > 1:
-            opts['format'] = 'bestaudio/best'
+        if attempt == 1:
+            # Spróbuj preferowanego formatu
+            pass
+        elif attempt == 2:
+            # Fallback: wszystko oprócz SABR
+            opts['format'] = 'best[height<=360]'
+        elif attempt > 2:
+            # Ostatni fallback: najlepszy dostępny format
+            opts['format'] = 'best'
         try:
             # if output_dir provided, ensure it exists and set outtmpl to write there
             search_dir = os.getcwd()
@@ -228,6 +233,10 @@ def download_audio(video_url: str, outtmpl: str = '%(title)s.%(ext)s', output_di
                 # set outtmpl to include output_dir so files are written there
                 opts['outtmpl'] = os.path.join(output_dir, outtmpl)
                 search_dir = output_dir
+
+            # Czekaj 2-3 sekundy przed pobieraniem (YouTube wymaga czasu między requests)
+            if attempt > 1:
+                time.sleep(2)
 
             with yt_dlp.YoutubeDL(opts) as ydl:
                 # ydl.download returns None; download will write file to outtmpl

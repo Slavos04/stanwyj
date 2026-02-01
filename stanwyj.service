@@ -4,13 +4,13 @@ After=network.target
 
 [Service]
 Type=simple
-User=youruser
-WorkingDirectory=/programy/stanwyj
+User=slavos
+WorkingDirectory=/home/slavos/stanwyj
 # Ensure virtualenv and system paths are available so ffmpeg/ffprobe are found
-Environment="PATH=/programy/stanwyj/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PATH=/home/slavos/stanwyj/venv/bin:/usr/local/bin:/usr/bin:/bin"
 # If ffmpeg is in a custom location, set FFMPEG_LOCATION here or in config.json
 Environment="FFMPEG_LOCATION=/usr/bin"
-ExecStart=/programy/stanwyj/venv/bin/python /programy/stanwyj/server.py
+ExecStart=/home/slavos/stanwyj/venv/bin/python /home/slavos/stanwyj/server.py
 Restart=on-failure
 
 [Install]

@@ -1,4 +1,4 @@
-#!/home/slavos/projektypython/stanwyj/venv/bin/python3
+#!/home/slavos/stanwyj/venv/bin/python3
 import sys
 from yt_dlp import main
 if __name__ == '__main__':
