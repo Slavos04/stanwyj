@@ -1,0 +1,36 @@
+Co zrobic nastepnego razu — szybka checklist i gotowy prompt
+
+1) Sprawdzic status uslugi i logi
+- `sudo systemctl status stanwyj.service --no-pager -l`
+- `sudo journalctl -u stanwyj.service -n 200 --no-pager`
+
+2) Sprawdzic konfiguracje i srodowisko
+- Otworz `config.json` i upewnij sie, ze `yt_dlp.cookies_file` = null (chyba, ze potrzebujesz auth)
+- Sprawdz `venv` i wersje yt-dlp: `/home/slavos/stanwyj/venv/bin/python -m pip show yt-dlp`
+- Upewnij sie, ze `node` jest zainstalowany (opcjonalne dla JS runtime): `node -v`
+
+3) Przeprowadzic test pobierania
+- Wykonaj lokalny request do API: `curl -X POST http://127.0.0.1:8090/api/download -d '{"url":"https://www.youtube.com/watch?v=dQw4w9WgXcQ"}' -H "Content-Type: application/json"`
+- Sprawdz `downloads/` czy plik powstal i czy telegram dostal powiadomienie
+
+4) Jezeli pojawia sie blad odnosnie HLS / fragmentow / JS runtime
+- Sprawdz logi (krok 1)
+- Jezeli brak Node.js — zainstaluj `curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt install -y nodejs`
+- Opcjonalnie w configie dodaj `--js-runtimes node` w argumentach yt-dlp
+
+5) GIT i deploy
+- Jezeli zmiany w kodzie: `git add -A && git commit -m "opis" && git push origin main`
+- Jezeli push wymaga klucza SSH: upewnij sie, ze `~/.ssh/id_ed25519.pub` jest dodany do GitHub
+
+6) Przywracanie/clean-up
+- Usun testowe pliki z `downloads/` jesli nie potrzebne: `rm downloads/<file>`
+- Utrzymuj `.gitignore` z `venv/` i `__pycache__/`
+
+Gotowy prompt (wklej do asystenta, gdy zaczynasz nastepna sesje):
+"Mam repozytorium `stanwyj` na serwerze. Sprawdź proszę kolejno: 1) status systemd usługi `stanwyj.service` i ostatnie logi, 2) czy `config.json` ma wyłączone cookies dla yt-dlp, 3) czy aktywne venv ma yt-dlp w wersji >= 2025.12, 4) czy Node.js jest zainstalowany jako JS runtime. Potem uruchom testowe pobranie przykładowego filmu (podam URL) i zgłoś wynik — czy pobieranie i powiadomienie Telegram działają, oraz jakie były ewentualne błędy i proponowane kroki naprawcze."
+
+Notatki dodatkowe:
+- Jeśli widzisz w logach `fragment not found` lub `The downloaded file is empty`, spróbuj tymczasowo wyłączyć cookies i użyć formatu `best[ext=mp4]/best`.
+- Jeśli potrzebujesz bardziej formalnego release/deploy planu, powiedz a dodam plik `DEPLOY_STEPS.md`.
+
+Plik wygenerowano automatycznie — zapisz i zamknij.
